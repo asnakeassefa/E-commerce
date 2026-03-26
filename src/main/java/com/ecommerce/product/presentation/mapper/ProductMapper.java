@@ -12,11 +12,13 @@ import com.ecommerce.product.presentation.dto.ProductResponseDto;
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
 
+    // request dto to domain
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     Product toDomain(CreateProductDto dto);
 
+    // response dto
     ProductResponseDto toResponseDto(Product product);
 
     List<ProductResponseDto> toResponseDtoList(List<Product> products);

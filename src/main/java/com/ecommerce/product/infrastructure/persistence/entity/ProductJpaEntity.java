@@ -30,16 +30,16 @@ public class ProductJpaEntity {
     @Column(nullable = false, unique = true)
     private String sku;
 
-    @Column(nullable = false)
+    @Column(name = "original_price", nullable = false)
     private BigDecimal originalPrice;
 
-    @Column(nullable = false)
+    @Column(name = "selling_price", nullable = false)
     private BigDecimal sellingPrice;
 
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     protected ProductJpaEntity() {
