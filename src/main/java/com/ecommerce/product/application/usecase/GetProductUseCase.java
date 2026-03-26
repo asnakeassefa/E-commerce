@@ -4,13 +4,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.stereotype.Service;
-
 import com.ecommerce.product.domain.entity.Product;
 import com.ecommerce.product.domain.exception.ProductNotFoundException;
 import com.ecommerce.product.domain.repository.ProductRepository;
 
-@Service
 public class GetProductUseCase {
     private final ProductRepository productRepository;
 
