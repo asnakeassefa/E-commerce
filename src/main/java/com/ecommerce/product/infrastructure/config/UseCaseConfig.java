@@ -1,8 +1,12 @@
-package com.ecommerce.product.application.usecase;
+package com.ecommerce.product.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.ecommerce.product.application.usecase.CreateProductUseCase;
+import com.ecommerce.product.application.usecase.DeleteProductUseCase;
+import com.ecommerce.product.application.usecase.GetProductUseCase;
+import com.ecommerce.product.application.usecase.UpdateProductUseCase;
 import com.ecommerce.product.domain.repository.ProductRepository;
 
 @Configuration
