@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 
 import com.ecommerce.product.domain.entity.Product;
+import com.ecommerce.product.domain.exception.ProductNotFoundException;
 import com.ecommerce.product.domain.repository.ProductRepository;
 import com.ecommerce.product.infrastructure.persistence.entity.ProductJpaEntity;
 import com.ecommerce.product.infrastructure.persistence.repository.JpaProductRepository;
@@ -21,8 +22,9 @@ public class ProductRepositoryAdapter implements ProductRepository {
 
     @Override
     public Optional<Product> findById(UUID id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+        ProductJpaEntity productJpaEntity = jpaProductRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        return Optional.of(ProductJpaEntity.toDomain(productJpaEntity));
     }
 
     @Override
@@ -34,22 +36,14 @@ public class ProductRepositoryAdapter implements ProductRepository {
 
     @Override
     public Product save(Product product) {
-        product.validateCoreFields();
         ProductJpaEntity productJpaEntity = ProductJpaEntity.fromDomain(product);
         ProductJpaEntity savedProductJpaEntity = jpaProductRepository.save(productJpaEntity);
         return ProductJpaEntity.toDomain(savedProductJpaEntity);
     }
 
     @Override
-    public Product update(Product product, UUID id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
-    }
-
-    @Override
     public void delete(UUID id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+        jpaProductRepository.deleteById(id);
     }
 
 }

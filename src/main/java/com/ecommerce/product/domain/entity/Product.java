@@ -46,6 +46,12 @@ public class Product {
         //
     }
 
+    public void markCreate(){
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
     public void markUpdated() {
         this.updatedAt = LocalDateTime.now();
     }
@@ -64,6 +70,15 @@ public class Product {
         if (sellingPrice == null || sellingPrice.compareTo(BigDecimal.ZERO) <= 0) {
             throw new InvalidProductException("Selling price must be greater than zero");
         }
+    }
+
+    public void update(Product product) {
+        this.name = product.getName();
+        this.description = product.getDescription();
+        this.sku = product.getSku();
+        this.originalPrice = product.getOriginalPrice();
+        this.sellingPrice = product.getSellingPrice();
+        this.markUpdated();
     }
 
     public static class ProductBuilder {
