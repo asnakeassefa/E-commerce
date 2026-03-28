@@ -1,10 +1,7 @@
 package com.ecommerce.auth.presentation.controller;
 
-import com.ecommerce.auth.application.usecase.LoginUserUseCase;
-import com.ecommerce.auth.application.usecase.RegisterUserUseCase;
-import com.ecommerce.auth.presentation.dto.AuthResponse;
-import com.ecommerce.auth.presentation.dto.LoginRequest;
-import com.ecommerce.auth.presentation.dto.RegisterRequest;
+import com.ecommerce.auth.application.usecase.*;
+import com.ecommerce.auth.presentation.dto.*;
 import com.ecommerce.auth.presentation.mapper.AuthMapper;
 import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
@@ -32,13 +29,25 @@ public class AuthController {
 
     private final RegisterUserUseCase registerUserUseCase;
     private final LoginUserUseCase loginUserUseCase;
+    private final VerifyEmailUseCase verifyEmailUseCase;
+    private final ResendVerificationUseCase resendVerificationUseCase;
+    private final RequestPasswordResetUseCase requestPasswordResetUseCase;
+    private final ResetPasswordUseCase resetPasswordUseCase;
     private final AuthMapper authMapper;
 
     public AuthController(RegisterUserUseCase registerUserUseCase,
                            LoginUserUseCase loginUserUseCase,
+                           VerifyEmailUseCase verifyEmailUseCase,
+                           ResendVerificationUseCase resendVerificationUseCase,
+                           RequestPasswordResetUseCase requestPasswordResetUseCase,
+                           ResetPasswordUseCase resetPasswordUseCase,
                            AuthMapper authMapper) {
         this.registerUserUseCase = registerUserUseCase;
         this.loginUserUseCase = loginUserUseCase;
+        this.verifyEmailUseCase = verifyEmailUseCase;
+        this.resendVerificationUseCase = resendVerificationUseCase;
+        this.requestPasswordResetUseCase = requestPasswordResetUseCase;
+        this.resetPasswordUseCase = resetPasswordUseCase;
         this.authMapper = authMapper;
     }
 
@@ -66,5 +75,36 @@ public class AuthController {
         );
 
         return ResponseEntity.ok(response);
+    }
+    @GetMapping("/verify-email")
+    public ResponseEntity<MessageResponse> verifyEmail(@RequestParam String token) {
+        VerifyEmailUseCase.Result result = verifyEmailUseCase.execute(token);
+        return ResponseEntity.ok(new MessageResponse(result.message()));
+    }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<MessageResponse> resendVerification(
+            @Valid @RequestBody ResendVerificationRequest request) {
+        ResendVerificationUseCase.Result result = resendVerificationUseCase.execute(request.email());
+        return ResponseEntity.ok(new MessageResponse(result.message()));
+    }
+
+    // ── Password Reset ───────────────────────────────────────────────
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<MessageResponse> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request) {
+        RequestPasswordResetUseCase.Result result = requestPasswordResetUseCase.execute(request.email());
+        return ResponseEntity.ok(new MessageResponse(result.message()));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<MessageResponse> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request) {
+        ResetPasswordUseCase.Input input = new ResetPasswordUseCase.Input(
+                request.token(), request.newPassword()
+        );
+        ResetPasswordUseCase.Result result = resetPasswordUseCase.execute(input);
+        return ResponseEntity.ok(new MessageResponse(result.message()));
     }
 }

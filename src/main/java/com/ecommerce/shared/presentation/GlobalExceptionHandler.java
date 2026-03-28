@@ -3,6 +3,7 @@ package com.ecommerce.shared.presentation;
 import com.ecommerce.auth.domain.exception.EmailAlreadyExistsException;
 import com.ecommerce.auth.domain.exception.InvalidCredentialsException;
 import com.ecommerce.auth.domain.exception.UserNotFoundException;
+import com.ecommerce.auth.domain.exception.InvalidTokenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -43,6 +44,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ApiErrorResponse.of(404, "Not Found", ex.getMessage()));
     }
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidToken(InvalidTokenException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiErrorResponse.of(400, "Bad Request", ex.getMessage()));
+    }
 
     // ── Validation errors (Jakarta @Valid) ────────────────────────────
 
@@ -66,12 +72,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiErrorResponse.of(400, "Bad Request", ex.getMessage()));
     }
+    
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ApiErrorResponse> handleIllegalState(IllegalStateException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ApiErrorResponse.of(403, "Forbidden", ex.getMessage()));
     }
+
 
     // ── Catch-all ────────────────────────────────────────────────────
 
@@ -82,4 +90,6 @@ public class GlobalExceptionHandler {
                 .body(ApiErrorResponse.of(500, "Internal Server Error",
                         "An unexpected error occurred"));
     }
+    
+    
 }

@@ -3,9 +3,12 @@ package com.ecommerce.auth.application.usecase;
 import com.ecommerce.auth.application.service.PasswordEncoder;
 import com.ecommerce.auth.application.service.TokenProvider;
 import com.ecommerce.auth.domain.entity.Role;
+import com.ecommerce.auth.domain.entity.AuthToken;
 import com.ecommerce.auth.domain.entity.User;
 import com.ecommerce.auth.domain.exception.EmailAlreadyExistsException;
 import com.ecommerce.auth.domain.repository.UserRepository;
+import com.ecommerce.auth.domain.repository.AuthTokenRepository;
+import com.ecommerce.auth.application.service.EmailService;
 
 /**
  * Use Case: Register a new CUSTOMER or VENDOR.
@@ -18,18 +21,25 @@ import com.ecommerce.auth.domain.repository.UserRepository;
  *  5. Return tokens
  */
 public class RegisterUserUseCase {
+    private static final int VERIFICATION_TOKEN_EXPIRY_MINUTES = 60 * 24; // 24 hours
 
     private final UserRepository userRepository;
+    private final AuthTokenRepository authTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
-
+    private final EmailService emailService;
     public RegisterUserUseCase(UserRepository userRepository,
+                                AuthTokenRepository authTokenRepository,
                                 PasswordEncoder passwordEncoder,
-                                TokenProvider tokenProvider) {
+                                TokenProvider tokenProvider,
+                            EmailService emailService) {
         this.userRepository = userRepository;
+        this.authTokenRepository = authTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
+         this.emailService = emailService;
     }
+
 
     public Result execute(Input input) {
         // 1. Check uniqueness
@@ -52,6 +62,15 @@ public class RegisterUserUseCase {
         // 4. Persist
         User savedUser = userRepository.save(user);
         
+        AuthToken verificationToken = AuthToken.create(
+                savedUser.getId(),
+                AuthToken.TokenType.VERIFY_EMAIL,
+                VERIFICATION_TOKEN_EXPIRY_MINUTES
+        );
+        authTokenRepository.save(verificationToken);
+        emailService.sendVerificationEmail(
+                savedUser.getEmail(), savedUser.getName(), verificationToken.getToken()
+        );
 
         // 5. Generate tokens
         String accessToken = tokenProvider.generateAccessToken(savedUser);
