@@ -59,6 +59,7 @@ public class UserRepositoryAdapter implements UserRepository {
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .role(user.getRole())
+                .verified(user.isVerified())
                 .active(user.isActive())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())

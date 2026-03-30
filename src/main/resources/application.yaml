@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/ecommerce
-    username: postgres
-    password: fakefake
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -12,3 +12,8 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+jwt:
+  secret: ${JWT_SECRET:local-dev-secret-key-change-this-in-production-must-be-at-least-32-chars}
+  access-token-expiration: 900000       # 15 minutes in milliseconds
+  refresh-token-expiration: 604800000   # 7 days in milliseconds

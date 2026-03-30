@@ -1,5 +1,5 @@
 package com.ecommerce.auth.presentation.controller;
-
+// import org.springframework.security.access.prepost.PreAuthorize;
 import com.ecommerce.auth.application.usecase.*;
 import com.ecommerce.auth.presentation.dto.*;
 import com.ecommerce.auth.presentation.mapper.AuthMapper;
@@ -65,6 +65,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    // @PreAuthorize("hasRole('VENDOR') or hasRole('ADMIN')")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
 
         LoginUserUseCase.Input input = authMapper.toLoginInput(request);

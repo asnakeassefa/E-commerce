@@ -24,6 +24,10 @@ public Result execute(Input input){
     if (!passwordEncoder.matches(input.password(), user.getPassword())){
         throw new InvalidCredentialsException();
     }
+
+    if (!user.isVerified()) {
+            throw new IllegalStateException("Account is not verified. Please check your email.");
+        }
     if (!user.isActive()) {
             throw new IllegalStateException("Account is not active. Please wait for admin approval.");
         }

@@ -90,6 +90,7 @@ public void validateForRegistration() {
         this.updatedAt = LocalDateTime.now();
     }
     public void verify() {
+        System.out.println("nahom fonti negn ene negn++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         this.verified = true;
         this.updatedAt = LocalDateTime.now();
     }
